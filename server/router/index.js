@@ -1,10 +1,19 @@
+require('dotenv').config();
+
 const express = require('express');
 const multer = require('multer');
 const bodyParser = require('body-parser');
+const unirest = require('unirest');
 const router = express.Router();
 const time = Date.now();
+const fs = require('fs');
+const config = require('../config/config');
 
-const newFileName = `audio${time}.mp3`;
+const apiUrl = config.apiUrl;
+const apiAuth = config.apiAuth;
+
+const newFileName = `audio${time}.flac`;
+const url = apiUrl;
 const storage = multer.diskStorage({
     destination(req, file, cb) {
       cb(null, 'uploads/');
@@ -29,8 +38,24 @@ router.post('/audio', (req, res, next) => {
               res.json({ error_code: 2, err_desc: err })
             return;
         }
-    console.log('File uploaded', req.file);
-    res.send('we are live')
+
+        unirest.post(url)
+        .headers({ 'Content-Type': 'audio/flac' })
+        .headers({ 'Authorization': apiAuth })
+        .field('filename', newFileName)
+        .attach('file', req.file.path) // Attachment
+        .end(function(response) {
+            let ans = response.raw_body;
+           ans = JSON.parse(ans);
+           const data = ans.results[0].alternatives[0].transcript;
+          fs.unlinkSync(req.file.path);//remove the file
+          res.send({
+              code: 200,
+              error: false,
+              message: 'audio converted successfully',
+              response: data
+          })
+         });
     });
 })
 
