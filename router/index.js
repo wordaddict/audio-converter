@@ -2,7 +2,6 @@ require('dotenv').config();
 
 const express = require('express');
 const multer = require('multer');
-const bodyParser = require('body-parser');
 const unirest = require('unirest');
 const router = express.Router();
 const time = Date.now();
@@ -16,7 +15,8 @@ const newFileName = `audio${time}.flac`;
 const url = apiUrl;
 const storage = multer.diskStorage({
     destination(req, file, cb) {
-      cb(null, 'uploads/');
+      // cb(null, 'uploads/');
+      cb(null, './uploads/')
     },
     filename: function (req, file, cb) {
       cb(null, newFileName);
@@ -24,9 +24,6 @@ const storage = multer.diskStorage({
   })
 
 const upload = multer({ storage }).single('file');
-
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
 
 router.post('/audio', (req, res, next) => {
     upload(req, res, (err) => {
@@ -37,6 +34,11 @@ router.post('/audio', (req, res, next) => {
         if (err) {
               res.json({ error_code: 1, err_desc: err })
             return;
+        }
+        if (req.file === undefined){
+          return res.send({
+            message: "unable to get file"
+          })
         }
         if (!req.file) {
               res.json({ error_code: 2, err_desc: err })
