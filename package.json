@@ -2,7 +2,12 @@
   "name": "server",
   "version": "1.0.0",
   "engines": {
+<<<<<<< HEAD:app/package.json
     "node": "6.11.3"
+=======
+    "node": "10.8.0",
+    "npm": "6.2.0"
+>>>>>>> c96501b6d9f542c0d598c3cd286d618d74a187fc:package.json
   },
   "description": "",
   "main": "index.js",
@@ -10,6 +15,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
+  "keywords": [
+    "heroku"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
