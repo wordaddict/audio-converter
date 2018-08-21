@@ -23,13 +23,16 @@ const storage = multer.diskStorage({
     }
   })
 
-const upload = multer({ storage }).single('audio');
+const upload = multer({ storage }).single('file');
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
 
 router.post('/audio', (req, res, next) => {
     upload(req, res, (err) => {
+        console.log('files', req.files)
+        console.log('file body', req.body)
+        console.log('file', req.file)
         if (err) {
               res.json({ error_code: 1, err_desc: err })
             return;
@@ -46,6 +49,9 @@ router.post('/audio', (req, res, next) => {
         .attach('file', req.file.path) // Attachment
         .end(function(response) {
             let ans = response.raw_body;
+            if(!ans) {
+                return;
+            }
            ans = JSON.parse(ans);
            const data = ans.results[0].alternatives[0].transcript;
           fs.unlinkSync(req.file.path);//remove the file
