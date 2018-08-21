@@ -6,14 +6,14 @@
     </head>
     <body>
         <div class="container">  
-                <form id="contact" action="/audio" method="post">
+                <form id="contact" action="/audio" enctype="multipart/form-data" method="post">
                     <h1>Audio converter to text</h1>
                     <div>
                         <label for="file">Choose audio to upload</label>
-                        <input type="file" id="file" name="audio" multiple>
+                        <input type="file" id="file" name="file" multiple>
                     </div>
                     <fieldset>
-                        <button name="submit" type="submit" id="contact-submit" data-submit="...Sending" value='audio'>Submit</button>
+                        <button name="submit" type="submit" id="contact-submit" data-submit="...Sending" value='submit'>Submit</button>
                     </fieldset>
                 </form>
             </div>
