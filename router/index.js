@@ -30,6 +30,7 @@ router.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
 
 router.post('/audio', (req, res, next) => {
     upload(req, res, (err) => {
+      console.log('reqfile', req.file);
       const originalName = req.file.originalname;
       const videoExtention = originalName.split('.');
       const extention = videoExtention[1];
