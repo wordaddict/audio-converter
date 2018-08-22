@@ -4,6 +4,8 @@ const router = require('./router/index');
 const path = require('path');
 const pug = require('pug');
 
+const port = process.env.PORT || 3005;
+
 app.use('/', router);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug')
@@ -14,7 +16,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/index.html'))
 });
 
-const port = 3005;
 app.listen(port, () => {
     console.log(`App is listening on port ${port}`);
 });

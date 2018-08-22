@@ -2,12 +2,12 @@ require('dotenv').config();
 
 const express = require('express');
 const multer = require('multer');
-const bodyParser = require('body-parser');
 const unirest = require('unirest');
 const router = express.Router();
 const time = Date.now();
 const fs = require('fs');
 const config = require('../config/config');
+const path = require('path');
 
 const apiUrl = config.apiUrl;
 const apiAuth = config.apiAuth;
@@ -16,7 +16,7 @@ const newFileName = `audio${time}.flac`;
 const url = apiUrl;
 const storage = multer.diskStorage({
     destination(req, file, cb) {
-      cb(null, 'uploads/');
+      cb(null, './uploads/')
     },
     filename: function (req, file, cb) {
       cb(null, newFileName);
@@ -25,11 +25,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage }).single('file');
 
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
-
 router.post('/audio', (req, res, next) => {
     upload(req, res, (err) => {
+      console.log('reqfile', req.file);
+      if (req.file === undefined){
+        return res.send({
+          message: "unable to get file"
+        })
+      }
       const originalName = req.file.originalname;
       const videoExtention = originalName.split('.');
       const extention = videoExtention[1];
@@ -37,6 +40,7 @@ router.post('/audio', (req, res, next) => {
               res.json({ error_code: 1, err_desc: err })
             return;
         }
+
         if (!req.file) {
               res.json({ error_code: 2, err_desc: err })
             return;
