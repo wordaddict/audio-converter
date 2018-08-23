@@ -8,7 +8,6 @@ const time = Date.now();
 const fs = require('fs');
 const config = require('../config/config');
 const path = require('path');
-const ffmpeg = require('fluent-ffmpeg');
 
 const apiUrl = config.apiUrl;
 const apiAuth = config.apiAuth;
@@ -54,23 +53,17 @@ router.post('/audio', (req, res, next) => {
         }
         let fileP = '';
         if (fileSizeInMb > 1) {
-          fileP = `largeFiles/output.mp3`
-          ffmpeg(`./uploads/${newFileN}`)
-            .inputOptions('-t 7') // 7s
-            .output('./largeFiles/output.mp3')
-            .run()
-            
-            return makeAPICall()
-              .then(() => {
-              });
-        };
-        fileP = req.file.path;
-        async function makeAPICall(){
+          return res.send({
+            error: true,
+            code: 400,
+            message: "Unable to process large audio files"
+          })
+        }
           return unirest.post(url)
           .headers({ 'Content-Type': `audio/${extention}` })
           .headers({ 'Authorization': apiAuth })
           .field('filename', newFileName)
-          .attach('file', fileP) // Attachment
+          .attach('file', req.file.path) // Attachment
           .end(function(response) {
             const responseCode = response.statusCode;
             if (responseCode === 400){
@@ -95,11 +88,6 @@ router.post('/audio', (req, res, next) => {
             fs.unlinkSync(req.file.path);//remove the file
           res.render('audio', {text: data})
            });
-        }
-
-        makeAPICall()
-        .then((data) => {
-        });
 
     });
 
