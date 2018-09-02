@@ -8,6 +8,7 @@ const time = Date.now();
 const fs = require('fs');
 const config = require('../config/config');
 const path = require('path');
+const Audio = require('audio')
 
 const apiUrl = config.apiUrl;
 const apiAuth = config.apiAuth;
@@ -27,11 +28,25 @@ const upload = multer({ storage }).single('file');
 
 router.post('/audio', (req, res, next) => {
     upload(req, res, (err) => {
+      console.log('req.file', req.file);
       const filePath = req.file.path;
       const fileName = filePath.split('/');
       const newFileN = fileName[1];
       const fileSize = req.file.size;
       const fileSizeInMb = fileSize / 1048576;
+
+          // Test
+      Audio.load(req.file).then(audio =>
+        audio
+          .trim()
+          .save('./uploads/sample-edited.mp3')
+      )
+
+
+
+    // Test
+
+
       if (req.file === undefined){
         return res.send({
           error: true,
